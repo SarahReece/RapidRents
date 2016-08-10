@@ -1,0 +1,106 @@
+using RapidRents.Web.Domain;
+using RapidRents.Web.Models;
+using RapidRents.Web.Models.Requests;
+using RapidRents.Web.Models.Responses;
+using RapidRents.Web.Models.ViewModels;
+using RapidRents.Web.Services;
+using System;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+
+namespace RapidRents.Web.Controllers.Api
+{
+    [RoutePrefix("api/tenants")]
+    public class TenantsAPIController : ApiController
+    {
+
+        private ITenantService _tenantService;
+        public IUserService _userService = null;
+
+        public TenantsAPIController(ITenantService tenantService, IUserService UserService)
+        {
+
+            _tenantService = tenantService;
+            _userService = UserService;
+        }
+
+        [Route, HttpPost]
+        public HttpResponseMessage Insert(TenantsAddRequest model)
+        {
+            string userId = _userService.GetCurrentUserId();
+
+            if (!ModelState.IsValid)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
+            }
+
+            ItemResponse<int> response = new ItemResponse<int>();
+
+            response.Item = _tenantService.Insert(model, userId);
+
+            return Request.CreateResponse(HttpStatusCode.OK, response);
+
+        }
+
+        [Route("{tenantId:int}"), HttpPut]
+        public HttpResponseMessage Update(TenantsUpdateRequest model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
+            }
+
+            SuccessResponse response = new SuccessResponse();
+
+            _tenantService.Update(model);
+
+            return Request.CreateResponse(HttpStatusCode.OK, model);
+        }
+
+
+        [Route, HttpGet]
+        public HttpResponseMessage GetTenants(TenantsGetRequest model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
+            }
+            ItemsResponse<Tenant> response = new ItemsResponse<Tenant>();
+
+            response.Items = _tenantService.GetAll();
+
+            return Request.CreateResponse(HttpStatusCode.OK, response);
+        }
+
+        [Route("{id:int}"), HttpGet]
+        public HttpResponseMessage GetTenantById(int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
+            }
+
+            ItemResponse<Tenant> response = new ItemResponse<Tenant>();
+
+            response.Item = _tenantService.GetById(id);
+
+            return Request.CreateResponse(response);
+        }
+
+        [Route("{id:int}"), HttpDelete]
+        public HttpResponseMessage DeleteById(int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
+            }
+
+            SuccessResponse response = new SuccessResponse();
+
+            _tenantService.DeleteById(id);
+
+            return Request.CreateResponse(HttpStatusCode.OK, response);
+        }
+    }
+}
