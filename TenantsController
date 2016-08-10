@@ -1,0 +1,37 @@
+using RapidRents.Web.Domain;
+using RapidRents.Web.Models;
+using RapidRents.Web.Models.ViewModels;
+using RapidRents.Web.Services;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Web.Mvc;
+
+namespace RapidRents.Web.Controllers
+{
+
+
+    [RoutePrefix("tenants")]
+    public class TenantController : BaseController
+    {
+        [Route("add")]
+        [Route ("{id:int}/edit")]
+         
+        //GET: Tenant
+        public ActionResult AddTenant(int? id = null)
+        {
+            ItemViewModel<int?> model = new ItemViewModel<int?>();
+
+            model.Item = id;
+
+            return View(model);
+
+        }
+
+        [Route("list")]
+        public ActionResult MyList()
+        {
+            
+            return View();
+        }
+    }
+}
