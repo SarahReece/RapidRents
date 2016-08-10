@@ -1,0 +1,32 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace RapidRents.Web.Domain
+{
+    public class Tenant
+    {
+
+        public int Id { get; set; }
+
+        public string UserId { get; set; }
+
+        public DateTime DateAdded { get; set; }
+
+        public DateTime DateModified { get; set; }
+
+        public string FirstName { get; set; }
+
+        public string LastName { get; set; }
+
+        public DateTime MoveInDate { get; set; }
+
+        public DateTime MoveOutDate { get; set; }
+
+        public bool IsRentCurrent { get; set; }
+
+        public int LeaseTermsId { get; set; }
+    }
+}
