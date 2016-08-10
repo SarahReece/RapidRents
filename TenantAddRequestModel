@@ -1,0 +1,39 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+
+namespace RapidRents.Web.Models.Requests
+{
+    public class TenantsAddRequest
+    {
+        public string UserId { get; set; }
+
+        [Required(ErrorMessage = "First name is required.")]
+        [MinLength(2, ErrorMessage = "Name must be more than 2 characters.")]
+        [MaxLength(25, ErrorMessage = "Name must be fewer than 25 characters.")]
+        public string FirstName { get; set; }
+
+        [Required(ErrorMessage = "Last name is required.")]
+        [MinLength(2, ErrorMessage = "Name must be more than 2 characters.")]
+        [MaxLength(25, ErrorMessage = "Name must be fewer than 25 characters.")]
+        public string LastName { get; set; }
+
+        [Required(ErrorMessage = "Move in date is required.")]
+        public DateTime MoveInDate { get; set; }
+
+        [Required(ErrorMessage = "Move out date is required.")]
+        public DateTime MoveOutDate { get; set; }
+
+        [Required(ErrorMessage = "Rent status is required.")]
+        public bool IsRentCurrent { get; set; }
+
+        public DateTime DateAdded { get; set; }
+
+        public DateTime DateModified { get; set; }
+
+        public int LeaseTermsId { get; set; }
+    }
+}
