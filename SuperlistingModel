@@ -1,0 +1,12 @@
+namespace RapidRents.Web.Domain.Listings
+{
+    public class SuperListing : Listing
+    {
+        public Address.Address Location { get; set; }
+
+        public static void Test()
+        {
+            Listing s = new SuperListing();
+        }
+    }
+}
