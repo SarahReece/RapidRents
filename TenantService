@@ -1,0 +1,141 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Data;
+using System.Data.SqlClient;
+using RapidRents.Data;
+using RapidRents.Web.Models;
+using RapidRents.Web.Models.Requests;
+using RapidRents.Web.Domain;
+
+namespace RapidRents.Web.Services
+{
+    public class TenantService : BaseService, ITenantService
+    {
+        public int Insert(TenantsAddRequest model, string userId)
+        {
+            int uid = 0;
+
+            DataProvider.ExecuteNonQuery(GetConnection, "dbo.Tenant_Insert",
+                inputParamMapper: delegate (SqlParameterCollection paramCollection)
+            {
+                paramCollection.AddWithValue("@UserId", userId);
+                paramCollection.AddWithValue("@FirstName", model.FirstName);
+                paramCollection.AddWithValue("@LastName", model.LastName);
+                paramCollection.AddWithValue("@MoveInDate", model.MoveInDate);
+                paramCollection.AddWithValue("@MoveOutDate", model.MoveOutDate);
+                paramCollection.AddWithValue("@LeaseTerms", model.LeaseTermsId);
+                paramCollection.AddWithValue("@IsRentCurrent", model.IsRentCurrent);
+
+                SqlParameter p = new SqlParameter("@id", System.Data.SqlDbType.Int);
+                p.Direction = System.Data.ParameterDirection.Output;
+
+                paramCollection.Add(p);
+
+            }, returnParameters: delegate (SqlParameterCollection param)
+            {
+                int.TryParse(param["@id"].Value.ToString(), out uid);
+            }
+
+            );
+            return uid;
+        }
+
+        public void Update(TenantsUpdateRequest model)
+        {
+            DataProvider.ExecuteNonQuery(GetConnection, "dbo.Tenant_Update",
+                inputParamMapper: delegate (SqlParameterCollection paramCollection)
+                {
+                    paramCollection.AddWithValue("@Id", model.Id);
+                    //paramCollection.AddWithValue("@UserId", userId);
+                    paramCollection.AddWithValue("@FirstName", model.FirstName);
+                    paramCollection.AddWithValue("@LastName", model.LastName);
+                    paramCollection.AddWithValue("@MoveInDate", model.MoveInDate);
+                    paramCollection.AddWithValue("@MoveOutDate", model.MoveOutDate);
+                    paramCollection.AddWithValue("@LeaseTerms", model.LeaseTermsId);
+                    paramCollection.AddWithValue("@IsRentCurrent", model.IsRentCurrent);
+
+
+                }
+                );
+        }
+
+        public List<Tenant> GetAll()
+        {
+            List<Tenant> tenantList = null;
+
+            DataProvider.ExecuteCmd(GetConnection, "dbo.Tenant_Select",
+                inputParamMapper: delegate (SqlParameterCollection paramCollection)
+                {
+
+                }
+                , map: delegate (IDataReader reader, short set)
+                {
+                    Tenant p = MapTenant(reader);
+
+                    if (tenantList == null)
+                    {
+                        tenantList = new List<Tenant>();
+                    }
+
+                    tenantList.Add(p);
+
+                }
+            );
+            return tenantList;
+        }
+
+       
+
+        public Tenant GetById(int Id)
+        {
+            Tenant p = null;
+
+            DataProvider.ExecuteCmd(GetConnection, "dbo.Tenant_SelectById",
+                inputParamMapper: delegate (SqlParameterCollection paramCollection)
+                {
+                    paramCollection.AddWithValue("@Id", Id);
+                }
+                , map: delegate (IDataReader reader, short set)
+                {
+                    p = MapTenant(reader);
+
+                }
+                );
+
+            return p;
+        }
+
+        public void DeleteById(int Id)
+        {
+            {
+                DataProvider.ExecuteNonQuery(GetConnection, "dbo.Tenants_Delete_ById",
+                    inputParamMapper: delegate (SqlParameterCollection paramCollection)
+                    {
+                        paramCollection.AddWithValue("@Id", Id);
+                    }
+                    );
+            }
+        }
+
+        private static Tenant MapTenant(IDataReader reader)
+        {
+            Tenant p = new Tenant();
+            int startingIndex = 0;
+
+            p.Id = reader.GetSafeInt32(startingIndex++);
+            p.UserId = reader.GetSafeString(startingIndex++);
+            p.DateAdded = reader.GetSafeDateTime(startingIndex++);
+            p.DateModified = reader.GetSafeDateTime(startingIndex++);
+            p.FirstName = reader.GetSafeString(startingIndex++);
+            p.LastName = reader.GetSafeString(startingIndex++);
+            p.MoveInDate = reader.GetSafeDateTime(startingIndex++);
+            p.MoveOutDate = reader.GetSafeDateTime(startingIndex++);
+            p.LeaseTermsId = reader.GetSafeInt32(startingIndex++);
+            p.IsRentCurrent = reader.GetSafeBool(startingIndex++);
+            return p;
+        }
+    }
+}
