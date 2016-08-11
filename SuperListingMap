@@ -1,0 +1,39 @@
+using System;
+using System.Collections.Generic;
+
+namespace RapidRents.Web.Domain.Listings
+{
+    public class SuperListingMap
+    {
+        public int AddressId { get; set; }
+
+        public int id { get; set; }
+
+        public int RentCost { get; set; }
+
+        public int LeaseTerms { get; set; }
+
+        public DateTime AvailabilityDate { get; set; }
+
+        public int Status { get; set; }
+
+        public bool HasParking { get; set; }
+
+        public int ListingsIncluded { get; set; }
+
+        public DateTime DateAdded { get; set; }
+
+        public DateTime DateModified { get; set; }
+
+        public List<KeyValuePair<int, string>> Utilities { get; set; }
+
+        public KeyValuePair<int, string>[] UtilitiesList { get; set; }
+
+        public string Description { get; set; }
+
+        public string Headline { get; set; }
+
+        public bool Featured { get; set; }
+
+    }
+}
